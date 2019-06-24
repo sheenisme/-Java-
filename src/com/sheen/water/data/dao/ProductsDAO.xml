@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+    
+	<mapper namespace="com.sheen.water.data.dao.ProductsDAO" >
+	<resultMap type="Products" id="ProductsMap">
+      <result property="kind" column="kind"/>
+      <result property="price" column="price"/>    
+    </resultMap>
+    
+	<insert id="doCreate" parameterType="Products">
+	insert into products(
+	kind
+	,price
+	)values(
+	#{kind}
+	,#{price}
+	)
+	</insert>
+	
+	<select id="findAll" resultMap="ProductsMap">
+	select * from products
+	</select>
+	
+	<update id="doUpdate" parameterType="Products">
+	update products set
+		price=#{price}
+		where kind=#{kind}
+	</update>
+	
+</mapper>

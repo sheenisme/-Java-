@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+    
+<mapper namespace="com.sheen.water.data.dao.CustomersDAO" >
+	<resultMap type="Customers" id="CustomersMap">
+      <id property="no" column="no"/>
+      <result property="name" column="name"/>
+      <result property="password" column="password"/>    
+      <result property="address" column="address"/> 
+      <result property="phone" column="phone"/> 
+    </resultMap>
+	<select id="findAll" resultMap="CustomersMap">
+		select * from customers
+	</select>
+	
+	<insert id="doCreate" parameterType="Customers">
+	insert into customers(
+	,name
+	,password
+	,address
+	,phone
+	)values(
+	,#{name}
+	,#{password}
+	,#{address}
+	,#{phone}
+	)
+	</insert>
+	
+	<select id="finaById" resultType="Customers" parameterType="Integer">
+	select select * from customers 
+		where no = #{no}
+	</select>
+	
+	<update id="doUpdate" parameterType="Customers">
+	update customers set 
+		name=#{name}
+		,password=#{password}
+		
+		
+		where no=#{no}
+	</update>
+	
+	<delete id="doRemove">
+	
+	</delete>
+</mapper>
