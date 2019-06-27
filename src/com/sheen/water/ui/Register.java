@@ -15,6 +15,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Register extends JFrame {
 
@@ -50,6 +55,7 @@ public class Register extends JFrame {
 	 */
 	public Register() {
 		setTitle("桶装水系统注册页面");
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 456, 411);
 		contentPane = new JPanel();
@@ -108,10 +114,11 @@ public class Register extends JFrame {
 			 */
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				Customers po=new Customers();
-				po.setName(name.getText().toString());
-				po.setPassword(new String (password1.getPassword()));
-				po.setAddress(address.getText().toString());
+				Customers c=new Customers();
+				c.setName(name.getText().toString());
+				c.setPassword(new String (password1.getPassword()));
+				c.setAddress(addredss.getText().toString());
+				c.setPhone(phone.getText().toString());
 				if(name.getText().toString().equals("")) {
 					JOptionPane.showMessageDialog(null, "用户名不能为空!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
@@ -144,11 +151,78 @@ public class Register extends JFrame {
 					JOptionPane.showMessageDialog(null, "您的手机号码为空！请输入正确的联系方式!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
-				//执行注册的操作，写入数据库
-				JOptionPane.showMessageDialog(null, "注册成功，请您使用桶装水系统！","友情提示",JOptionPane.INFORMATION_MESSAGE);
-				//转入登录页面
-				dispose();
-				new Login().setVisible(true);				
+				
+				
+				
+				Socket socket = null;
+				//1、创建客户端Socket，指定服务器地址和端口
+				try {
+					socket = new Socket("127.0.0.1",28889);
+				} catch (UnknownHostException e) {
+					System.out.println("创建客户端Socket失败！- UnknownHostException");
+					e.printStackTrace();
+				} catch (IOException e) {
+					System.out.println("创建客户端Socket失败！- IOException ");
+					e.printStackTrace();
+				}
+				ObjectOutputStream oos = null;
+				//2、获取输出流，向服务器端发送信息
+				try {
+					oos =  new ObjectOutputStream(socket.getOutputStream());
+				} catch (IOException e) {
+					System.out.println("获取输出流出现异常！- IOException ");
+					e.printStackTrace();
+				}
+					
+				//字节输出流
+				try {
+					oos.writeObject(c);
+					oos.flush();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+				//关闭输出流
+				try {
+					socket.shutdownOutput();
+				} catch (IOException e) {
+					System.out.println("socket.shutdownOutput()-出现异常！- IOException ");
+					e.printStackTrace();
+				}
+				
+				ObjectInputStream ois = null;
+				//3、获取输入流，并读取服务器端的响应信息
+				try {
+					ois = new ObjectInputStream(socket.getInputStream());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					int rs=(int) ois.readObject();
+					if(rs > 0) {
+						JOptionPane.showMessageDialog(null, "注册成功，请您使用桶装水系统！","友情提示",JOptionPane.INFORMATION_MESSAGE);
+						//转入登录页面
+						dispose();
+						new Login().setVisible(true);
+					}else {
+						JOptionPane.showMessageDialog(null, "注册错误","输入错误",JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				//关闭输入流
+				try {
+					socket.shutdownInput();
+				} catch (IOException e) {
+					System.out.println("关闭ClientSocket的输入流失败！！");
+					e.printStackTrace();
+				}
+								
 			}
 		});
 		button.setBounds(135, 288, 129, 32);

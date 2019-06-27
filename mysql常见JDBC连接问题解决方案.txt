@@ -1,0 +1,5 @@
+老版本驱动：com.mysql.jdbc.Driver
+新版本驱动：com.mysql.cj.jdbc.Driver
+
+URL：后面+“?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true”
+mybatis中的URL的＆要用“&amp;”

@@ -40,6 +40,7 @@ public class CreateProducts extends JFrame {
 	 * Create the frame.
 	 */
 	public CreateProducts() {
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("桶装水新增页面");
 		getContentPane().setBackground(SystemColor.controlHighlight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,11 +85,11 @@ public class CreateProducts extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {		
-				if(kind.getText().trim() == null) {
+				if(kind.getText().trim() == null || kind.getText().trim() == "") {
 					JOptionPane.showMessageDialog(null, "容量不能为空!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
-				if(price.getText().trim() == null) {
+				if(price.getText().trim() == null || kind.getText().trim() == "") {
 					JOptionPane.showMessageDialog(null, "价格不能为空","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}

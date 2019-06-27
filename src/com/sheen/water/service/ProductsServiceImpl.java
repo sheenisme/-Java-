@@ -6,6 +6,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.sheen.water.data.dao.ProductsDAO;
 import com.sheen.water.data.po.Products;
@@ -18,7 +20,8 @@ public class ProductsServiceImpl implements ProductsService{
 	private ProductsDAO dao;
 	 
 	@Test
-	public List<Products> findAll() {
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT, readOnly = false)
+	public synchronized List<Products> findAll() {
 		List<Products> list=null;
 		try {
 			list = dao.findAll();
@@ -28,25 +31,20 @@ public class ProductsServiceImpl implements ProductsService{
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			//查询失败，回滚事务
-			
-		}finally {
-			//关闭session
 		}
 		return list;
 	}
 	
-	public boolean create(Products po) {
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT, readOnly = false)
+	public synchronized boolean create(Products po) {
 		boolean flag=false;
 		try {
-			//System.out.print(dao);
 			this.dao.doCreate(po);
 			flag=true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();	
 		}
-		
 		return flag;
 	}
 }

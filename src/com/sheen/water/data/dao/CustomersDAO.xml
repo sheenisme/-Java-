@@ -16,12 +16,12 @@
 	
 	<insert id="doCreate" parameterType="Customers">
 	insert into customers(
-	,name
+	name
 	,password
 	,address
 	,phone
 	)values(
-	,#{name}
+	#{name}
 	,#{password}
 	,#{address}
 	,#{phone}
@@ -29,15 +29,19 @@
 	</insert>
 	
 	<select id="finaById" resultType="Customers" parameterType="Integer">
-	select select * from customers 
+	select * from customers 
 		where no = #{no}
+	</select>
+	  
+	<select id="findByName" resultType="Customers" parameterType="String">
+	select * from customers 
+		where name = #{loginName}
 	</select>
 	
 	<update id="doUpdate" parameterType="Customers">
 	update customers set 
 		name=#{name}
 		,password=#{password}
-		
 		
 		where no=#{no}
 	</update>

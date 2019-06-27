@@ -3,21 +3,32 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
     
 <mapper namespace="com.sheen.water.data.dao.OrdersDAO" >
+
+	<resultMap type="Orders" id="OrdersMap">
+      <result property="customer_no" column="customer_no"/>
+      <result property="order_time" column="order_time"/>  
+      <result property="total_money" column="total_money"/> 
+      <result property="sender_name" column="sender_name"/> 
+      <result property="sender_phone" column="sender_phone"/>   
+    </resultMap>
+    
 	<insert id="doCreate" parameterType="Orders">
 	insert into orders(
-	customer_no
-	,order_time
+	order_time
 	,total_money
 	,state
 	,sender_name
 	,sender_phone
 	)values(
-	#{customer_no}
-	,#{order_time}
+	#{order_time}
 	,#{total_money}
 	,#{state}
 	,#{sender_name}
 	,#{sender_phone}
 	)
 	</insert>
+	
+	<select id="findAll" resultMap="OrdersMap">
+	select * from orders
+	</select>
 </mapper>

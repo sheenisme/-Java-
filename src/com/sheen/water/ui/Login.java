@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
+import com.sheen.water.control.ClientSocket;
 import com.sheen.water.data.po.Customers;
 
 import javax.swing.JButton;
@@ -89,6 +90,8 @@ public class Login extends JFrame {
 				Customers po=new Customers();
 				po.setName(name.getText());
 				po.setPassword(new String (password.getPassword()));
+				@SuppressWarnings("unused")
+				ClientSocket client = new ClientSocket(po);
 				if(po.getName().equals("")) {
 					JOptionPane.showMessageDialog(null, "用户名不能为空!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
@@ -101,16 +104,19 @@ public class Login extends JFrame {
 					JOptionPane.showMessageDialog(null, "密码不能为空!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
-				if(po.getName().equals("admin") && po.getPassword().equals("123456")) {
+				dispose();
+				/*
+				if( ) {
 					JOptionPane.showMessageDialog(null, "登录成功，欢迎使用桶装水系统！","友情提示",JOptionPane.INFORMATION_MESSAGE);
 					//启动主界面
 					dispose();					
 				}else {
 					JOptionPane.showMessageDialog(null, "用户名或密码错误","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
-				}	
+				}	*/
 			}
-		});
+		}
+		);
 		button.setFont(new Font("仿宋", Font.BOLD, 18));
 		button.setForeground(new Color(0, 0, 255));
 		button.setBackground(new Color(240, 240, 240));

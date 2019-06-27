@@ -6,9 +6,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.sheen.water.data.Model.OrdersTableModel;
+import com.sheen.water.data.po.Orders;
+import com.sheen.water.service.OrdersService;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JMenuBar;
 import javax.swing.JTable;
@@ -20,16 +25,16 @@ public class BackStage extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable table;
-	private JScrollPane scrollPane;
-	private DefaultTableModel model;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					
 					BackStage frame = new BackStage();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -48,7 +53,7 @@ public class BackStage extends JFrame {
 		setBounds(100, 100, 749, 539);
 		
 		initMenu();
-		new UpdateTableThread().start();
+		//new UpdateTableThread().start();
 		
 	}
 	
@@ -58,10 +63,9 @@ public class BackStage extends JFrame {
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("添加桶装水类型");
 		mntmNewMenuItem_1.addMouseListener(new MouseAdapter() {
-			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new CreateProducts();
+				new CreateProducts().setVisible(true);
 			}
 		});
 		mntmNewMenuItem_1.setFont(new Font("宋体", Font.PLAIN, 17));
@@ -97,20 +101,37 @@ public class BackStage extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		table = new JTable();
-		contentPane.add(table, BorderLayout.NORTH);
+		//获取Bean，这个无法直接依赖注入
+		@SuppressWarnings("resource")
+		ApplicationContext act =  new ClassPathXmlApplicationContext("applicationContext.xml");
+	    OrdersService service = act.getBean(OrdersService.class);
+	    List <Orders> list=service.findAll();
+	    OrdersTableModel tableModel = new OrdersTableModel();
+	    tableModel.setData(list);
+	    table = new JTable(tableModel);
+		// 通过JTable对象创建JScrollPane，显示数据
+		JScrollPane scrollPane = new JScrollPane(table);
+		contentPane.add(scrollPane,BorderLayout.CENTER);
+		setContentPane(contentPane);
+		
+		new UpdateTableThread().start();
 	}
 	
 	// 刷新
 	private void flushMatchedTable() {
 		// 创建tableModel
-		model = new DefaultTableModel();
+		@SuppressWarnings("resource")
+		ApplicationContext act =  new ClassPathXmlApplicationContext("applicationContext.xml");
+	    OrdersService service = act.getBean(OrdersService.class);
+	    List <Orders> list=service.findAll();
+	    OrdersTableModel model = new OrdersTableModel();
+	    model.setData(list);
 		// 使用tableModel创建JTable
 		JTable table = new JTable(model);
 		// 通过JTable对象创建JScrollPane，显示数据
-		scrollPane = new JScrollPane(table);
+		JScrollPane scrollPane = new JScrollPane(table);
 		// 添加XX选项卡
-		contentPane.add("XX", scrollPane);
+		contentPane.add(scrollPane,BorderLayout.CENTER);
 	}
 		
 		

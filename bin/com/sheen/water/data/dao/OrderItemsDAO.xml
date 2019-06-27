@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+    
+<mapper namespace="com.sheen.water.data.dao.OrderItemsDAO" >
+
+	<resultMap type="OrderItems" id="OrderItemsMap">
+      <result property="order_no" column="order_no"/>
+      <result property="kind" column="kind"/>  
+      <result property="price" column="price"/> 
+      <result property="quantity" column="quantity"/> 
+      <result property="sub_total" column="sub_total"/>   
+    </resultMap>
+    
+	<insert id="doCreate" parameterType="OrderItems">
+	insert into order_items(
+	kind
+	,price
+	,quantity
+	,sub_total
+	)values(
+	#{kind}
+	,#{price}
+	,#{quantity}
+	,#{sub_total}
+	)
+	</insert>
+	
+	<select id="findAll" resultMap="OrderItemsMap">
+	select * from order_items
+	</select>
+</mapper>
