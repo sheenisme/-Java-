@@ -13,7 +13,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.sheen.water.data.Model.ProductsTableModel;
 import com.sheen.water.data.po.OrderItems;
 import com.sheen.water.data.po.Products;
-import com.sheen.water.service.OrderItemsService;
 import com.sheen.water.service.ProductsService;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
@@ -23,6 +22,11 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -172,16 +176,84 @@ public class Index extends JFrame {
 				}
 				else {
 					orderItem.setKind(Double.parseDouble(table.getValueAt(selectRow[0],0).toString()));
-					orderItem.setPrice(Double.parseDouble(table.getValueAt(selectRow[0],1).toString()));
+					//orderItem.setPrice(Double.parseDouble(table.getValueAt(selectRow[0],1).toString()));
 					orderItem.setQuantity(Integer.parseInt(textField.getText()));
-					orderItem.setSub_total(orderItem.getPrice() * orderItem.getQuantity());
-					@SuppressWarnings("resource")
-					ApplicationContext act =  new ClassPathXmlApplicationContext("applicationContext.xml");
-					OrderItemsService service = act.getBean(OrderItemsService.class);
-					if(service.create(orderItem) == true) {
-						JOptionPane.showMessageDialog(null, "下单成功，下单成功了！","友情提示",JOptionPane.INFORMATION_MESSAGE);
+					orderItem.update();
+					
+					Socket socket = null;
+					//1、创建客户端Socket，指定服务器地址和端口
+					try {
+						socket = new Socket("127.0.0.1",28887);
+					} catch (UnknownHostException e1) {
+						System.out.println("创建客户端Socket失败！- UnknownHostException");
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						System.out.println("创建客户端Socket失败！- IOException ");
+						e1.printStackTrace();
 					}
+					
+					ObjectOutputStream oos = null;
+					//2、获取输出流，向服务器端发送信息
+					try {
+						oos =  new ObjectOutputStream(socket.getOutputStream());
+					} catch (IOException e1) {
+						System.out.println("获取输出流出现异常！- IOException ");
+						e1.printStackTrace();
+					}
+						
+					//字节输出流
+					try {
+						oos.writeObject(orderItem);
+						oos.flush();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}	
+					//关闭输出流
+					try {
+						socket.shutdownOutput();
+					} catch (IOException e1) {
+						System.out.println("socket.shutdownOutput()-出现异常！- IOException ");
+						e1.printStackTrace();
+					}
+					
+					ObjectInputStream ois = null;
+					//3、获取输入流，并读取服务器端的响应信息
+					try {
+						ois = new ObjectInputStream(socket.getInputStream());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					try {
+						boolean rs= (boolean) ois.readObject();
+						if(rs == true) {
+							JOptionPane.showMessageDialog(null, "下单成功！","友情提示",JOptionPane.INFORMATION_MESSAGE);
+							this.dispose();
+							new Index().setVisible(true);
+						}else {
+							JOptionPane.showMessageDialog(null, "下单错误","输入错误",JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					//关闭输入流
+					try {
+						socket.shutdownInput();
+					} catch (IOException e1) {
+						System.out.println("关闭下单的Socket的输入流失败！！");
+						e1.printStackTrace();
+					}								
 				}		
+			}
+
+			private void dispose() {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
@@ -231,6 +303,7 @@ public class Index extends JFrame {
 			
 			
 		// 线程类，每隔两分钟刷新一次显示数据表格中的数据
+		@SuppressWarnings("unused")
 		private class UpdateTableThread extends Thread {
 			// 重写run()方法
 			public void run() {

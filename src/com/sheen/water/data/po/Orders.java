@@ -2,8 +2,12 @@ package com.sheen.water.data.po;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Orders implements Serializable{
+	Locale cn=new Locale("zh","cn");
+	NumberFormat nf=NumberFormat.getCurrencyInstance(cn);
 	/**
 	 * 
 	 */
@@ -27,8 +31,8 @@ public class Orders implements Serializable{
 	public void setOrder_time(Timestamp order_time) {
 		this.order_time = order_time;
 	}
-	public double getTotal_money() {
-		return total_money;
+	public String getTotal_money() {
+		return nf.format(total_money);
 	}
 	public void setTotal_money(double total_money) {
 		this.total_money = total_money;

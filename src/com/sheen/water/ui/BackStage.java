@@ -112,9 +112,9 @@ public class BackStage extends JFrame {
 		// 通过JTable对象创建JScrollPane，显示数据
 		JScrollPane scrollPane = new JScrollPane(table);
 		contentPane.add(scrollPane,BorderLayout.CENTER);
-		setContentPane(contentPane);
+		setContentPane(contentPane);		
 		
-		new UpdateTableThread().start();
+		//new UpdateTableThread().start();
 	}
 	
 	// 刷新
@@ -136,6 +136,7 @@ public class BackStage extends JFrame {
 		
 		
 	// 线程类，每隔两分钟刷新一次显示数据表格中的数据
+	@SuppressWarnings("unused")
 	private class UpdateTableThread extends Thread {
 		// 重写run()方法
 		public void run() {

@@ -1,8 +1,12 @@
 package com.sheen.water.data.po;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Products implements Serializable{
+	Locale cn=new Locale("zh","cn");
+	NumberFormat nf=NumberFormat.getCurrencyInstance(cn);
 	/**
 	 * 
 	 */
@@ -10,8 +14,8 @@ public class Products implements Serializable{
 	private double kind;
 	private double price;
 
-	public double getPrice() {
-		return price;
+	public String getPrice() {
+		return nf.format(price);
 	}
 	public void setPrice(double price) {
 		this.price = price;

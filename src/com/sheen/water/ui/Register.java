@@ -1,13 +1,10 @@
 package com.sheen.water.ui;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import com.sheen.water.data.po.Customers;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -20,6 +17,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.regex.Pattern;
 
 public class Register extends JFrame {
 
@@ -89,9 +87,9 @@ public class Register extends JFrame {
 		password2.setBounds(176, 135, 121, 30);
 		contentPane.add(password2);
 		
-		JLabel address = new JLabel("家庭住址：");
-		address.setBounds(90, 180, 75, 30);
-		contentPane.add(address);
+		JLabel add = new JLabel("家庭住址：");
+		add.setBounds(90, 180, 75, 30);
+		contentPane.add(add);
 		
 		JLabel label_2 = new JLabel("联系电话：");
 		label_2.setBounds(90, 223, 75, 30);
@@ -112,6 +110,7 @@ public class Register extends JFrame {
 			/**
 			 * 双击注册按钮对应的事件
 			 */
+			@SuppressWarnings("deprecation")
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				Customers c=new Customers();
@@ -125,6 +124,11 @@ public class Register extends JFrame {
 				}
 				if(name.getText().toString().length() < 3) {
 					JOptionPane.showMessageDialog(null, "用户名长度不能小于3!","输入错误",JOptionPane.ERROR_MESSAGE);
+					return ;
+				}
+				if(!(Pattern.compile("^[a-z0-9_-]{3,15}$").matcher(name.getText().toString()).matches()))
+				{
+					JOptionPane.showMessageDialog(null, "正则表达式验证失败，请输入正确格式的名字!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
 				if(password1.getPassword().toString().equals("")) {
@@ -143,16 +147,29 @@ public class Register extends JFrame {
 					JOptionPane.showMessageDialog(null, "密码长度小于6!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
-				if(address.getText().toString().equals("")) {
+				if(!(Pattern.compile("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$").matcher(password1.getText().toString()).matches()))
+				{
+					JOptionPane.showMessageDialog(null, "正则表达式验证失败，请正确格式的密码!","输入错误",JOptionPane.ERROR_MESSAGE);
+					return ;
+				}
+				if(addredss.getText().toString().equals("")) {
 					JOptionPane.showMessageDialog(null, "您的地址为空！请输入正确的地址!","输入错误",JOptionPane.ERROR_MESSAGE);
+					return ;
+				}
+				if(!(Pattern.compile("^[\\u4e00-\\u9fa5]{0,}$").matcher(addredss.getText().toString().trim()).matches()))
+				{
+					JOptionPane.showMessageDialog(null, "正则表达式验证失败，请正确格式的中文地址!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
 				if(phone.getText().toString().equals("")) {
 					JOptionPane.showMessageDialog(null, "您的手机号码为空！请输入正确的联系方式!","输入错误",JOptionPane.ERROR_MESSAGE);
 					return ;
 				}
-				
-				
+				if(!(Pattern.compile("^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$").matcher(phone.getText().toString()).matches()))
+				{
+					JOptionPane.showMessageDialog(null, "正则表达式验证失败，请正确格式的手机号码!","输入错误",JOptionPane.ERROR_MESSAGE);
+					return ;
+				}		
 				
 				Socket socket = null;
 				//1、创建客户端Socket，指定服务器地址和端口
